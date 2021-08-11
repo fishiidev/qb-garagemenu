@@ -36,7 +36,7 @@ AddEventHandler("qb-garages:list_vehicles",function(gName)
                             },
                         })
                     end
-                elseif garagevehs[i].state == 2 and gName == "hayesdepot" then
+                elseif (garagevehs[i].state == 2 or vehcheck[i].depotprice > 0) and gName == "hayesdepot" then
                     local vehname = vehcheck[i].vehicle:upper()
                     local plate = vehcheck[i].plate
                     TriggerClientEvent('nh-context:sendMenu', src, {
@@ -45,7 +45,7 @@ AddEventHandler("qb-garages:list_vehicles",function(gName)
                             header = vehname,
                             txt = plate,
                             params = {
-                                event = "qb-garages:takeoutveh",
+                                event = "qb-garages:takeoutveh:depot",
                                 args = {
                                     vehicle = vehcheck[i]
                                 }
@@ -56,4 +56,19 @@ AddEventHandler("qb-garages:list_vehicles",function(gName)
             end
         end
 	end)
+end)
+
+RegisterServerEvent('qb-garage:server:PayDepotPrice:menu')
+AddEventHandler('qb-garage:server:PayDepotPrice:menu', function(plate)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local bankBalance = Player.PlayerData.money["bank"]
+    exports['ghmattimysql']:execute('SELECT * FROM player_vehicles WHERE plate = @plate', {['@plate'] = plate}, function(result)
+        if result[1] ~= nil then
+            if bankBalance >= result[1].depotprice then
+                Player.Functions.RemoveMoney("bank", result[1].depotprice, "paid-depot")
+                exports['ghmattimysql']:execute('UPDATE player_vehicles SET depotprice = @depotprice WHERE plate = @plate', {['@depotprice'] = 0, ['@plate'] = plate})
+            end
+        end
+    end)
 end)
