@@ -6,3 +6,6 @@
 
 # You need to change your @qb-garages\SharedConfig.lua with @qb-garagemenu\to qb-garages\SharedConfig.lua
 
+# TODO List
++ Make it work with OutsideVehicles
+
