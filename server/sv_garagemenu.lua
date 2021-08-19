@@ -52,6 +52,22 @@ AddEventHandler("qb-garages:list_vehicles",function(gName)
                             }
                         },
                     })
+		elseif (garagevehs[i].state == 0) then
+                    local vehname = vehcheck[i].vehicle:upper()
+                    local plate = vehcheck[i].plate
+                    TriggerClientEvent('nh-context:sendMenu', src, {
+                        {
+                            id = i,
+                            header = vehname,
+                            txt = plate,
+                            params = {
+                                event = "qb-garages:takeoutveh:depot",
+                                args = {
+                                    vehicle = vehcheck[i]
+                                }
+                            }
+                        },
+                    })				
                 end
             end
         end
